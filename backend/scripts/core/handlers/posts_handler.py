@@ -1,5 +1,5 @@
 from datetime import datetime
-from scripts.db.mongo.blogPost.collections.posts import Posts
+from scripts.db.mongo.raabta.collections.posts import Posts
 from scripts.db.mongo import mongo_client
 import random
 
@@ -55,8 +55,6 @@ class PostsHandler:
         try:
             post = self.posts.find(query={"id": post_id})
             for p in post:
-                # print(p)
-                # print(p["likes"])
                 if p == None:
                     raise
                 elif user_id not in p["likes"]:

@@ -35,9 +35,3 @@ class DBConf:
         if not uri:
             print("Error, ENV variable Mongo URI not set")
             sys.exit(1)
-
-    class Postgres:
-        uri = config.get("POSTGRES", "uri")
-        if not uri:
-            print("Error, ENV variable Mongo URI not set")
-            sys.exit(1)

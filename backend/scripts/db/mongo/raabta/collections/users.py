@@ -6,10 +6,11 @@ from scripts.utils.mongo_util import MongoCollectionBaseClass
 
 
 class UsersSchema(MongoBaseSchema):
-    name: str
+    username: str
     email: EmailStr
     password: str
     profilePicture: Optional[str] = ""
+    coverPicture: Optional[str] = ""
     followers: Optional[list] = []
     following: Optional[list] = []
 
@@ -27,21 +28,20 @@ class Users(MongoCollectionBaseClass):
         if users:
             return list(users)
 
-    def find_user(self, eid):
-        user = self.find_one(query={"eid": eid})
+    def find_user(self, user_id):
+        user = self.find_one(query={"user_id": user_id})
         if user:
             return user
     
     def find_user_by_mail(self,email):
         user = self.find_one(query={"email":email})
-        if user:
-            return user
+        return user
 
     def create_user(self, data: dict):
         self.insert_one(data=data)
 
-    def update_user(self, eid: str, data: dict):
-        self.update_one(query={"eid": eid}, data=data, upsert=True)
+    def update_user(self, user_id: str, data: dict):
+        self.update_one(query={"user_id": user_id}, data=data, upsert=True)
 
-    def delete_user(self, eid: str):
-        self.delete_one(query={"eid": eid})
+    def delete_user(self, user_id: str):
+        self.delete_one(query={"user_id": user_id})

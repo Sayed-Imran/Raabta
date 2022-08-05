@@ -1,4 +1,5 @@
 from typing import Optional
+from xmlrpc.client import Boolean
 from pydantic import BaseModel, EmailStr
 
 
@@ -8,4 +9,4 @@ class TokenSchema(BaseModel):
 
 class TokenData(BaseModel):
     email: str = None
-    role: str = None
+    Admin: Boolean = False

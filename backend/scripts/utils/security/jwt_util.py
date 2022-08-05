@@ -1,4 +1,5 @@
 from typing import Dict
+from xmlrpc.client import Boolean
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -27,10 +28,10 @@ class JWT:
     def verify_admin(self, token: str, credential_exception):
         try:
             payload = jwt.decode(token, Secrets.UNIQUE_KEY, algorithms=[Secrets.ALG])
-            role: str = payload.get("role")
-            if role != "role_admin":
+            role: Boolean = payload.get("Admin")
+            if not role :
                 raise credential_exception
-            token_data = TokenData(role=role)
+            token_data = TokenData(Admin=role)
             return token_data
         except JWTError:
             raise credential_exception
@@ -39,14 +40,14 @@ class JWT:
         try:
 
             payload = jwt.decode(token, Secrets.UNIQUE_KEY, algorithms=[Secrets.ALG])
-            role: str = payload.get("role")
+            role: Boolean = payload.get("Admin")
             email: str = payload.get("email")
             user_id: int = payload.get("user_id")
             
             
             if role is None:
                 raise credential_exception
-            token_data = {"role":role,"email":email,"user_id":user_id}
+            token_data = {"Admin":role,"email":email,"user_id":user_id}
             return token_data
         except JWTError:
             raise credential_exception

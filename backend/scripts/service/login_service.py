@@ -11,14 +11,14 @@ user_cred = APIRouter()
 def login(cred: OAuth2PasswordRequestForm = Depends()):
     try:
         login_handler = LoginHandler()
-        response, role, user_id = login_handler.validate_user(
+        response, email, role, user_id = login_handler.validate_user(
             {"email": cred.username, "password": cred.password}
         )   
         if response:
 
             return {
                 "access_token": login_handler.create_jwt_token(
-                    {"email": cred.username, "role": role, "user_id": user_id}
+                    {"user_id": user_id, "email": email, "Admin": role}
                 ),
                 "token_type": "bearer",
             }
@@ -35,15 +35,17 @@ def login(cred: OAuth2PasswordRequestForm = Depends()):
 @user_cred.post("/register", status_code=status.HTTP_201_CREATED)
 def register(user_det: UserRequestSchema):
     try:
+        user = user_det.dict()
+        user["isAdmin"] = False
         login_handler = LoginHandler()
-        if not login_handler.check_new_user(user_det.dict()["email"]):
+        if not login_handler.check_new_user(user["email"]):
             user_handler = UserHandler()
-            ret = user_handler.create_user(user_det.dict())
+            ret = user_handler.create_one(user)
             if ret:
                 return {
                     "status": "Success",
-                    "name": user_det.name,
-                    "email": user_det.email,
+                    "name": user["username"],
+                    "email": user["email"],
                 }
             else:
                 raise

@@ -1,7 +1,8 @@
-from scripts.db.mongo.fasttest.collections.users import Users
+from scripts.db.mongo.raabta.collections.users import Users
 from scripts.db.mongo import mongo_client
 from scripts.utils.security.hash import hashPassword
-
+import string
+import random
 
 class UserHandler:
     def __init__(self):
@@ -14,9 +15,9 @@ class UserHandler:
             print(e.args)
             return None
 
-    def find_one(self, eid: str):
+    def find_one(self, user_id: str):
         try:
-            return self.users.find_user(eid)
+            return self.users.find_user(user_id)
         except Exception as e:
             print(e.args)
             return None
@@ -24,19 +25,22 @@ class UserHandler:
     def create_one(self, data: dict):
         try:
             data["password"] = hashPassword(data["password"])
+            data["user_id"] = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
             self.users.create_user(data=dict(data))
+            return True
         except Exception as e:
             print(e.args)
+            return False
 
-    def update_one(self, eid: str, data: dict):
+    def update_one(self, user_id: str, data: dict):
         try:
             data["password"] = hashPassword(data["password"])
-            self.users.update_user(eid=eid, data=dict(data))
+            self.users.update_user(user_id=user_id, data=dict(data))
         except Exception as e:
             print(e.args)
 
-    def delete_one(self, eid: str):
+    def delete_one(self, user_id: str):
         try:
-            self.users.delete_user(eid=eid)
+            self.users.delete_user(user_id=user_id)
         except Exception as e:
             print(e.args)
