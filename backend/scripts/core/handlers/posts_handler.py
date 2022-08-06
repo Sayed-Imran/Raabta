@@ -2,7 +2,7 @@ from datetime import datetime
 from scripts.db.mongo.raabta.collections.posts import Posts
 from scripts.db.mongo import mongo_client
 import random
-
+import string
 
 class PostsHandler:
     def __init__(self):
@@ -24,9 +24,11 @@ class PostsHandler:
 
     def create_one(self, data: dict, user_id: int):
         try:
-            data["id"] = str(user_id) + str(random.randrange(1, 1000))
+            data["id"] = str(user_id) + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
             data["user_id"] = user_id
             data["created_at"] = "{}".format(datetime.now())
+            data["updated_at"] = "{}".format(datetime.now())
+            data["likes"] = []
             self.posts.create_post(data=dict(data))
         except Exception as e:
             print(e.args)
@@ -40,13 +42,14 @@ class PostsHandler:
 
     def delete_one(self, id: str, user_id: int):
         try:
-            self.posts.delete_post(user_id=user_id, id=id)
+            ret = self.posts.delete_post(user_id=user_id, id=id)
+            return ret
         except Exception as e:
             print(e.args)
 
     def get_all_the_posts(self):
         try:
-            return self.posts.get_all_posts()
+            return self.posts.timeline_posts()
         except Exception as e:
             print(e.args)
             raise

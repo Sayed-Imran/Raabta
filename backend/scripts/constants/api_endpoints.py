@@ -9,7 +9,7 @@ class APIEndpoints:
     update_user = "/update_user"
 
     posts = "/posts"
-    get_posts = "/get_posts"
+    get_posts = "/get_timeline_posts"
     find_posts = "/find_posts"
     find_post = "/find_post"
     create_post = "/create_post"

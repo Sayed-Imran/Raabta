@@ -4,4 +4,3 @@ from pydantic import BaseModel
 class PostsSchema(BaseModel):
     desc: str
     image : Optional[str] = ""
-    likes : Optional[list] = []

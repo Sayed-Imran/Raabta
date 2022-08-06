@@ -61,7 +61,7 @@ class MongoCollectionBaseClass:
                     .skip(skip)
                 )
             else:
-                cursor = collection.find(query, filter_dict).skip(skip)
+                cursor = list(collection.find(query, filter_dict).skip(skip))
             if limit:
                 cursor = cursor.limit(limit)
 

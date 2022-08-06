@@ -40,7 +40,8 @@ class Posts(MongoCollectionBaseClass):
         self.update_one(query={"id": id, "user_id": user_id}, data=data, upsert=True)
 
     def delete_post(self, user_id: int, id: str):
-        self.delete_one(query={"user_id": user_id, "id": id})
+        ret = self.delete_one(query={"user_id": user_id, "id": id})
+        return ret
 
 
     def post_like(self, user_id: int, post_id: str):
@@ -52,3 +53,7 @@ class Posts(MongoCollectionBaseClass):
         self.update_pull_array(
             query={"id": post_id}, array_key="likes", data=user_id
         )
+
+    def timeline_posts(self):
+        posts = self.find(query={})
+        return posts

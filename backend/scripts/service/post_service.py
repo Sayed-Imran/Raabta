@@ -58,10 +58,10 @@ def create_post(post: PostsSchema, user_data=Depends(jwt.get_current_user)):
 
 
 @posts_router.put(APIEndpoints.update_post + "/{id}", status_code=status.HTTP_200_OK)
-def update_post(id: str, post: PostsSchema, user_data=Depends(jwt.get_current_user)):
+def update_post(id: str, post: PostsSchema, user=Depends(jwt.get_current_user)):
     try:
         posts_handler = PostsHandler()
-        posts_handler.update_one(user_id=user_data["user_id"], id=id, data=post.dict())
+        posts_handler.update_one(user_id=user["user_id"], id=id, data=post.dict())
         return DefaultResponse(
             status="Success", message="Successfully updated post", data=post
         )
@@ -76,16 +76,22 @@ def update_post(id: str, post: PostsSchema, user_data=Depends(jwt.get_current_us
 def delete_post(id: str, user_data=Depends(jwt.get_current_user)):
     try:
         posts_handler = PostsHandler()
-        posts_handler.delete_one(id=id, user_id=user_data["user_id"])
-        return DefaultResponse(
-            status="Success", message=f"Successfully deleted post with {id}"
-        )
+        ret = posts_handler.delete_one(id=id, user_id=user_data["user_id"])
+        if ret != 0:
+            
+            return DefaultResponse(
+                status="Success", message=f"Successfully deleted post with {id}"
+            )
+        else:
+            return DefaultResponse(
+                status="Failed", message="Failed to delete post"
+            )
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.args)
 
 
 @posts_router.get(APIEndpoints.get_posts, status_code=status.HTTP_200_OK)
-def get_posts(user_data=Depends(jwt.get_current_user)):
+def get_posts(user=Depends(jwt.get_current_user)):
     try:
         posts_handler = PostsHandler()
         posts = posts_handler.get_all_the_posts()
@@ -95,11 +101,11 @@ def get_posts(user_data=Depends(jwt.get_current_user)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 
-@posts_router.post(APIEndpoints.like, status_code=status.HTTP_200_OK)
-def post_like(post_id: dict, user_data=Depends(jwt.get_current_user)):
+@posts_router.get(APIEndpoints.like + "/{id}", status_code=status.HTTP_200_OK)
+def post_like(id:str,user_data=Depends(jwt.get_current_user)):
     try:
         post_handler = PostsHandler()
-        return post_handler.post_like(post_id=post_id["post_id"], user_id=user_data["user_id"])
+        return post_handler.post_like(post_id=id, user_id=user_data["user_id"])
     except Exception as e:
         print(e.args)
-        raise
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
