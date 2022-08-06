@@ -1,5 +1,4 @@
 from typing import Any, Optional
-from xmlrpc.client import Boolean
 from pydantic import BaseModel, EmailStr
 
 
@@ -10,17 +9,17 @@ class UserRequestSchema(BaseModel):
     profilePicture: Optional[str] = ""
     coverPicture: Optional[str] = ""
     followers: Optional[list] = []
-    following: Optional[list] = []
+    followings: Optional[list] = []
     desc: Optional[str] = ""
     location: Optional[str] = ""
 
 class UpdateUserData(BaseModel):
-    username: str
-    email: EmailStr
-    profilePicture: Optional[str] = ""
-    coverPicture: Optional[str] = ""
-    desc: Optional[str] = ""
-    location: Optional[str] = ""
+    username: Optional[str]
+    email: Optional[EmailStr]
+    profilePicture: Optional[str]
+    coverPicture: Optional[str]
+    desc: Optional[str]
+    location: Optional[str]
 
 class DefaultResponse(BaseModel):
     status: str = "Failed"
@@ -34,3 +33,14 @@ class ResponseModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class GetUserResponse(BaseModel):
+    user_id:str
+    username:str
+    email: EmailStr
+    followers: list
+    followings: list
+    desc: str
+    location: str
+    profilePicture: str
+    coverPicture: str

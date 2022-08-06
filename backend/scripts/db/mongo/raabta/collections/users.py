@@ -12,7 +12,7 @@ class UsersSchema(MongoBaseSchema):
     profilePicture: Optional[str] = ""
     coverPicture: Optional[str] = ""
     followers: Optional[list] = []
-    following: Optional[list] = []
+    followings: Optional[list] = []
 
 
 class Users(MongoCollectionBaseClass):
@@ -41,7 +41,16 @@ class Users(MongoCollectionBaseClass):
         self.insert_one(data=data)
 
     def update_user(self, user_id: str, data: dict):
-        self.update_one(query={"user_id": user_id}, data=data, upsert=True)
+        ret = self.update_one(query={"user_id": user_id}, data=data, upsert=True)
 
     def delete_user(self, user_id: str):
         self.delete_one(query={"user_id": user_id})
+
+    def follow_user(self,user_id:str,follow_user_id:str):
+        self.update_push_array(query={"user_id":user_id},data=follow_user_id,array_key="followings")
+        self.update_push_array(query={"user_id":follow_user_id},data=user_id,array_key="followers")
+
+    def unfollow_user(self,user_id:str,follow_user_id:str):
+        self.update_pull_array(query={"user_id":user_id},data=follow_user_id,array_key="followings")
+        self.update_pull_array(query={"user_id":follow_user_id},data=user_id,array_key="followers")
+        

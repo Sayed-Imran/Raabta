@@ -34,7 +34,6 @@ class UserHandler:
 
     def update_one(self, user_id: str, data: dict):
         try:
-            data["password"] = hashPassword(data["password"])
             self.users.update_user(user_id=user_id, data=dict(data))
         except Exception as e:
             print(e.args)
@@ -42,5 +41,22 @@ class UserHandler:
     def delete_one(self, user_id: str):
         try:
             self.users.delete_user(user_id=user_id)
+        except Exception as e:
+            print(e.args)
+
+    def follow(self,user_id:str,follow_user_id:str):
+        try:
+            user = self.users.find_one(query={"user_id":user_id})
+            if follow_user_id not in user["followings"]:
+                self.users.follow_user(user_id,follow_user_id)
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e.args)
+
+    def unfollow(self,user_id:str,follow_user_id:str):
+        try:
+            self.users.unfollow_user(user_id,follow_user_id)
         except Exception as e:
             print(e.args)

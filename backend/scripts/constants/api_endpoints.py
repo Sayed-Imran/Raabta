@@ -17,3 +17,5 @@ class APIEndpoints:
     update_post = "/update_post"
 
     like = "/like"
+    follow = "/follow"
+    unfollow = "/unfollow"

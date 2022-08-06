@@ -42,9 +42,6 @@ class Posts(MongoCollectionBaseClass):
     def delete_post(self, user_id: int, id: str):
         self.delete_one(query={"user_id": user_id, "id": id})
 
-    def get_all_posts(self):
-        posts = self.find(query={"published": True})
-        return list(posts)
 
     def post_like(self, user_id: int, post_id: str):
         self.update_push_array(
