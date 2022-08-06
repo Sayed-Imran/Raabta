@@ -4,6 +4,7 @@ from scripts.core.handlers.posts_handler import PostsHandler
 from scripts.schemas.posts_schema import PostsSchema
 from scripts.constants.api_endpoints import APIEndpoints
 from scripts.core.handlers.posts_handler import PostsHandler
+from scripts.core.handlers.user_handler import UserHandler
 from scripts.schemas.user_schemas import DefaultResponse
 from scripts.utils.security.jwt_util import JWT
 
@@ -93,8 +94,11 @@ def delete_post(id: str, user_data=Depends(jwt.get_current_user)):
 @posts_router.get(APIEndpoints.get_posts, status_code=status.HTTP_200_OK)
 def get_posts(user=Depends(jwt.get_current_user)):
     try:
+        user_handler = UserHandler()
+        user_data = user_handler.find_one(user_id=user["user_id"])
+        user_data["followings"].append(user["user_id"])
         posts_handler = PostsHandler()
-        posts = posts_handler.get_all_the_posts()
+        posts = posts_handler.get_all_the_posts(user_data["followings"])
         return posts
     except Exception as e:
         print(e.args)

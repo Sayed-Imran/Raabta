@@ -47,9 +47,9 @@ class PostsHandler:
         except Exception as e:
             print(e.args)
 
-    def get_all_the_posts(self):
+    def get_all_the_posts(self,users:list):
         try:
-            return self.posts.timeline_posts()
+            return self.posts.timeline_posts(query={"user_id":{"$in":users}})
         except Exception as e:
             print(e.args)
             raise

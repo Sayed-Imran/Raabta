@@ -54,6 +54,6 @@ class Posts(MongoCollectionBaseClass):
             query={"id": post_id}, array_key="likes", data=user_id
         )
 
-    def timeline_posts(self):
-        posts = self.find(query={})
+    def timeline_posts(self,query):
+        posts = self.find(query=query)
         return posts
