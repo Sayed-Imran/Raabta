@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status, HTTPException, Depends, BackgroundTasks
 from scripts.constants.secrets import Secrets
-from scripts.core.handlers.puser_handler import PuserHandler
+from scripts.db.mongo.raabta.collections.users import Users
 from scripts.schemas.password_reset_schema import PasswordScheme
+from scripts.core.handlers.user_handler import UserHandler
 from scripts.utils.security.hash import hashPassword
 from scripts.utils.security.jwt_util import JWT
-from sqlalchemy.orm import Session
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from jose import jwt
 
@@ -42,15 +42,14 @@ passwd_reset = APIRouter()
 
 @passwd_reset.post("/forgotpasswd", status_code=status.HTTP_202_ACCEPTED)
 def passwordReset(
-    background_tasks: BackgroundTasks, data: dict, db: Session = Depends(get_db)
-):
+    background_tasks: BackgroundTasks, data: dict):
     try:
-        user = Users(db)
-        ret = user.read_one_by_email(data["email"])
+        user = Users()
+        ret = user.find_user_by_mail(data["email"])
         if not ret:
             raise
         link = "http://localhost/newpasswd/" + JWT().create_token(
-            {"id": ret[0], "email": ret[2]}
+            {"id": ret["user_id"], "email": ret["email"]}
         )
         send_email_background(
             background_tasks,
@@ -74,7 +73,7 @@ def passwordReset(
 
 
 @passwd_reset.post("/newpasswd" + "/{token}", status_code=status.HTTP_202_ACCEPTED)
-def newpassword(token: str, data: PasswordScheme, db: Session = Depends(get_db)):
+def newpassword(token: str, data: PasswordScheme):
     try:
         if data.new_passwd != data.conf_passwd:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
@@ -82,8 +81,8 @@ def newpassword(token: str, data: PasswordScheme, db: Session = Depends(get_db))
         passwd = hashPassword(data.conf_passwd)
         payload = jwt.decode(token, Secrets.UNIQUE_KEY, algorithms=[Secrets.ALG])
         email = payload.get("email")
-        user_handler = PuserHandler()
-        user_handler.update_password(email=email, password=passwd, db=db)
+        user_handler = UserHandler()
+        user_handler.update_password(email=email, password=passwd)
         return {"new_passwd": passwd}
 
     except Exception as e:

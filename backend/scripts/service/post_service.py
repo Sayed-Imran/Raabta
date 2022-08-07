@@ -14,10 +14,10 @@ jwt = JWT()
 
 
 @posts_router.get(APIEndpoints.find_posts, status_code=status.HTTP_200_OK)
-def find_posts(user_data=Depends(jwt.get_current_user)):
+def find_posts(user=Depends(jwt.get_current_user)):
     try:
         posts_handler = PostsHandler()
-        response = posts_handler.find_posts(user_id=user_data["user_id"])
+        response = posts_handler.find_posts(user_id=user["user_id"])
         return DefaultResponse(
             status="Success", message="Found All posts Available", data=response
         )

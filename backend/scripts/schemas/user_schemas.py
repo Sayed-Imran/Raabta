@@ -14,12 +14,12 @@ class UserRequestSchema(BaseModel):
     location: Optional[str] = ""
 
 class UpdateUserData(BaseModel):
-    username: Optional[str]
-    email: Optional[EmailStr]
-    profilePicture: Optional[str]
-    coverPicture: Optional[str]
-    desc: Optional[str]
-    location: Optional[str]
+    username: Optional[str] = ""
+    email: Optional[EmailStr] = ""
+    profilePicture: Optional[str] = ""
+    coverPicture: Optional[str] = ""
+    desc: Optional[str] = ""
+    location: Optional[str] = ""
 
 class DefaultResponse(BaseModel):
     status: str = "Failed"
