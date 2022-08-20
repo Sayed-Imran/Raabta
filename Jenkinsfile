@@ -86,7 +86,7 @@ pipeline {
         stage('Updating the backend and frontend containers'){
             steps{
                 sh'''
-                    docker run -dit -p 4411:4411 -e MONGO_URI='mongodb://udnbgfjsjvaqwo:1ed34db1de639f06b5395b79f1c03512853730833bb875b318853f9f2a970f2d@ec2-34-247-172-149.eu-west-1.compute.amazonaws.com:5432/d332rc4fce6ojq' -e PORT=27017 --name backend sayedimran/raabta-backend:latest
+                    docker run -dit -p 4411:4411 -e MONGO_URI='' -e PORT=27017 --name backend sayedimran/raabta-backend:latest
                     docker run -dit -p 80:3000 -e BACKEND_URI='http://raabta.crazeops.tech:8000/' --name frontend sayedimran/raabta-frontend:latest
                 '''
             }
